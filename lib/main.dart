@@ -24,12 +24,11 @@ class _MyApppState extends State<MyApp> {
   Color textIconColor = Colors.white;
   double timerSize = 20;
 
-  // --------timer variables------------
-  int seconds = 59;
-  int mintutes = 59;
-  int hour = 12;
+  // --------Seconds, Minutes, Hours------------
+  int seconds = 9;
+  int mintutes = 5;
+  int hour = 1;
 
-  int backendValue = 60;
   Timer? timer;
 
   @override
@@ -39,24 +38,33 @@ class _MyApppState extends State<MyApp> {
   }
 
   void runTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(Duration(milliseconds: 1), (timer) {
+      // ----This is like constant variable, don't try to modify it.
+      int backendValue = seconds + 1;
       setState(() {
         if (seconds <= 59 || seconds >= 0 || mintutes == 59) {
-          backendValue--;
-          if (backendValue >= 1) {
-            seconds--;
-          } else if (backendValue == 0 && mintutes > 0) {
-            seconds = 59;
-            backendValue = 60;
-            mintutes--;
-          } else if (mintutes == 0) {
-            hour--;
-            mintutes = 59;
-            seconds = 59;
-            backendValue = 60;
+          if (seconds <= 59 && mintutes <= 59) {
+            backendValue--;
+            if (backendValue >= 1) {
+              seconds--;
+              // print('seconds');
+              print(backendValue);
+            } else if (backendValue == 0 && mintutes > 0) {
+              seconds = 59;
+              backendValue = 60;
+              mintutes--;
+              // print('minutes');
+            } else if (mintutes == 0 && hour != 0) {
+              hour--;
+              mintutes = 59;
+              seconds = 59;
+              backendValue = 60;
+              // print('hours');
+            } else {
+              timer.cancel();
+              // print('Stopped');
+            }
           }
-        } else {
-          timer.cancel();
         }
       });
     });
@@ -88,17 +96,26 @@ class _MyApppState extends State<MyApp> {
                       color: Colors.white,
                       size: clockIconSize,
                     ),
-                    SizedBox(width: mqSize.width * 0.01),
+                    SizedBox(width: mqSize.width * 0.007),
 
-                    Text(
-                      (hour == 0)
-                          ? '${mintutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}'
-                          : '${hour.toString().padLeft(2, '0')}:${mintutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+                    SizedBox(
+                      height: mqSize.height * 0.1,
+                      width: mqSize.width * 0.09,
 
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: timerSize,
-                        fontWeight: FontWeight.bold,
+                      child: Center(
+                        child: FittedBox(
+                          child: Text(
+                            (hour == 0)
+                                ? '${mintutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}'
+                                : '${hour.toString().padLeft(2, '0')}:${mintutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: timerSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
